@@ -1,5 +1,6 @@
 package FASTAReaderSuffixes;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -80,17 +81,41 @@ public class FASTAReaderSuffixes extends FASTAReader {
 	 *         pattern in the data.
 	 */
 	@Override
-	public List<Integer> search(byte[] pattern) {	
+	public List<Integer> search(byte[] pattern) {
+		// TODO
 		// LÍMITES DE LA BÚSQUEDA:
 		// Busco sobre suffixes, que ya está ordenado. Creo límite inferior (lo) y
 		// superior (hi), boolean que será true cuando se encuentre el patrón
 		int lo = 0;
 		int hi = suffixes.length - 1;
 		boolean found = false;
-		
-		//
-		
-		return null;
+		int index = 0;
+		List<Integer> initialPositions = new ArrayList<Integer>();
+
+		while (index >= lo && index <= hi && lo < hi && found == false) {
+			// Calculo la posición del sufijo que está en la mitad de la lista de sufijos
+			int posSuffix = (hi - lo) / 2;
+			// Si el patrón coincide en una posición, aumento index y sigo comparando
+			if (pattern[posSuffix] == content[posSuffix + index]) {
+				index++;
+				// Si index llega a medir lo mismo que el patrón, y el patrón coincide con el
+				// genoma en todas las posiciones, guardo poSuffixes en la lista y acabo la
+				// búsqueda poniendo found a true
+				if (index == pattern.length) {
+					initialPositions.add(posSuffix);
+					found = true;
+				}
+				// Si el patrón y el genoma no coinciden moviendo posSuffix una ud a la izq, lo
+				// muevo otra ud a la izquierda
+			} else if (pattern[posSuffix - 1] != content[posSuffix + index]) {
+				posSuffix = posSuffix - 1;
+				// Igual que la línea superior pero a la derecha
+			} else if (pattern[posSuffix + 1] != content[posSuffix + index]) {
+				posSuffix = posSuffix + 1;
+			}
+		}
+		return initialPositions;
+
 	}
 
 	public static void main(String[] args) {
